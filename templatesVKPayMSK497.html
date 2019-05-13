@@ -1,0 +1,322 @@
+﻿<script type="text/html" id="ConcertRuLayout">
+    <div class="ticket-count">
+        <div data-action="goBack" class="back"><a href="javascript:void(0)">Назад</a></div>
+        <div data-action="goForm" class="to-checkout"><a href="javascript:void(0)" class="btn btn-success<%=ticketCount == 0 ? ' hidden' : ''%>"><%=ticketCount%> билет<%=ending%> за <%=ticketPrice%> руб.</a></div>
+    </div>        
+    <div class="content">
+    </div>
+    <div id="footer">Служба поддержки: 8 (800) 700-66-33, <a href="mailto:info@concert.ru">info@concert.ru</a>.</div>
+</script>
+    
+<script type="text/html" id="ConcertRuSearchActions">
+    <div class="concert-info">
+        <ul>
+            <% for(var i = 0; i < actions.length; i++ ){ %>
+            <li data-action="selectActionId" data-action-id="<%=actions[i].actionId%>">
+                <h4><%=actions[i].actionDateList%> <%=actions[i].artist%></h4>
+                <em><%=actions[i].actionPlace%></em>
+                <p class="age"><%=actions[i].age%></p>
+            </li>
+        <% } %>
+        </ul>
+    </div>
+</script>
+<script type="text/html" id="ConcertRuOrderStep0">
+    <div class="concert-info">
+        <div>
+            <div class="photo-container">
+                <img src="<%=logoUrl%>" class="photo" alt="">
+            </div>
+            <div class="concert-info-date-container">
+                <h2 class="concert-info-placeName"><%=placeName%></h2>
+                <p class="age"><%=age%></p>
+            </div>
+        </div>
+        <div>
+            <h3 class="concert-info-artist"><%=artist%> <small>Выбор сеанса</small></h3>
+        </div>
+    </div>
+
+    <div class="ticket-info <%= hasTicket?'has-ticket':'' %>">
+        <div class="tickets">
+            <table>
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Мест в&nbsp;продаже</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% for(var i = 0; i < tickets.length; i++ ) { var ticket = tickets[i]; %>
+                <tr data-action="selectAction" data-action-date-id="<%=ticket.actionDateId%>">
+                    <td><a class="" href="javascript:void(0)"><%=ticket.actionDate%></a></td>
+                    <td><a class="" href="javascript:void(0)"><%=ticket.quantity%></a></td>
+                </tr>
+                <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div class="no-tickets alert">
+            Извините, но на данное событие билетов уже нет.
+        </div>
+    </div>
+</script>
+<script type="text/html" id="ConcertRuError">
+    <div class="alert alert-danger">Извините, произошла ошибка</div>
+</script>
+<script type="text/html" id="ConcertRuOrderStep1">
+    <div class="concert-info">
+        <div>
+            <div class="photo-container">
+                <img src="<%=logoUrl%>" class="photo" alt="<%=artist%>">
+            </div>
+            <div class="concert-info-date-container">
+                <p class="concert-info-date"><%=actionDate%></p>
+                <p class="concert-info-placeName"><%=placeName%></p>
+                <p class="age"><%=age%></p>                
+            </div>
+
+        </div>
+        <div>
+            <h3 class="concert-info-artist"><%=artist%> <small>Выбор диапазона</small> <a data-action="goScheme" href="javascript:void(0)" class="btn btn-danger<%=isShowScheme ? '' : ' hidden'%>">Заказать по схеме</a> </h3>
+            
+        </div>
+    </div>        
+    <div class="ticket-info <%= hasTicket?'has-ticket':'' %>">
+        <div class="tickets">
+            <% for(var seats in tickets) { var seat = tickets[seats]; %>
+                <div class="seat"><%=seats%></div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ряд</th>
+                            <th>Место</th>
+                            <th>Цена руб.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for(var i = 0; i < seat.length; i++ ) { var ticket = seat[i]; %>
+                            <tr data-action="choseSeats" data-seats="<%=ticket.seats%>" data-seat-type="<%=ticket.seatType%>" data-row-number="<%=ticket.rowNumber%>" data-price="<%=ticket.price%>">
+                                <td><a href="javascript:void(0)"><%=ticket.rowNumber%></a></td>
+                                <td><a href="javascript:void(0)"><%=ticket.ticketInfo%></a></td>
+                                <td><a href="javascript:void(0)"><%=ticket.price%></a></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+        <div class="no-tickets alert">
+            Извините, но на данное событие билетов уже нет.
+        </div>
+    </div>
+</script>
+<!--AI:Page for scheme-->
+<script type="text/html" id="ConcertRuOrderScheme">
+	<div class="concert-info">
+		<div>
+			<div class="photo-container">
+				<img src="<%=logoUrl%>" class="photo" alt="<%=artist%>">
+			</div>
+			<div class="concert-info-date-container">
+				<p class="concert-info-date"><%=actionDate%></p>
+				<p class="concert-info-placeName"><%=placeName%></p>
+				<p class="age"><%=age%></p>
+			</div>
+
+		</div>
+		<div>
+			<h3 class="concert-info-artist"><%=artist%> <small>Заказ по схеме</small> <a data-action="goList" href="javascript:void(0)" class="btn btn-danger">Заказать по списку</a>
+			</h3>			
+        </div>
+    </div>
+
+    <div class="ticket-info <%= hasTicket?'has-ticket':'' %>">
+        
+            <div class="scheme-box ratio16_9">
+                <div class="scheme-content">
+                    <div id="mapWidget">
+                        <div id="page-preloader"><div class="contpre"><div class="cssload-container"><div class="cssload-bouncywrap"><div class="cssload-cssload-dotcon cssload-dc1"><div class="cssload-dot"></div></div><div class="cssload-cssload-dotcon dc2"><div class="cssload-dot"></div></div><div class="cssload-cssload-dotcon dc3"><div class="cssload-dot"></div></div></div></div></div></div>
+                    </div>
+                </div>
+            </div>
+        <div class="no-tickets alert">
+            Извините, но на данное событие билетов уже нет.
+        </div>
+    </div>
+</script>
+<!--End page for scheme-->
+<script type="text/html" id="ConcertRuOrderStep2">
+    <div class="concert-info">
+        <div>
+            <div class="photo-container">
+                <img src="<%=logoUrl%>" class="photo" alt="<%=artist%>">
+            </div>
+            <div class="concert-info-date-container">
+                <p class="concert-info-date"><%=actionDate%></p>
+                <p class="concert-info-placeName"><%=placeName%></p>
+            </div>
+
+        </div>
+        <div>
+            <h3 class="concert-info-artist"><%=artist%> <small>Выбор билетов</small>
+            </h3>
+        </div>
+        <%if(markup > 0){%>
+        <p>Наценка продавца: <%=markup%>%</p>
+        <%}%>
+    </div>
+
+    <div class="ticket-info <%= hasTicket?'has-ticket':'' %>">
+        <div class="tickets">
+            <table>
+                <thead>
+                <tr>
+                    <th>Сектор</th>
+
+                    <th>Тип мест</th>
+
+                    <th>Ряд</th>
+                    <th>Место</th>
+                    <th>Цена</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% for(var i = 0; i< tickets.length; i++ ) { var ticket = tickets[i]; %>
+                <tr class="ticket-row <%=ticket.isSelectedTicket?'selected-ticket':''%>"
+                    data-action="selectTicket" data-ticket-id="<%=ticket.ticketId%>" data-price="<%=ticket.price%>"
+                    data-seats="<%=ticket.seats%>" data-row-number="<%=ticket.rowNumber%>" data-seat-number="<%=ticket.seatNumber%>"
+                    data-ticket-Markup-Final="<%=ticket.ticketMarkupFinal%>">
+						
+						
+						
+                        <td><a href="javascript:void(0)"><%=ticket.seats%></a></td>
+						
+						<td><a href="javascript:void(0)"><%=ticket.seatType%></a></td>
+						
+                        <td><a href="javascript:void(0)"><%=ticket.rowNumber%></a></td>
+                        <td><a href="javascript:void(0)"><%=ticket.seatNumber%></a></td>
+                        <td><a href="javascript:void(0)"><%=ticket.price%></a></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div class="no-tickets alert">
+            Извините, но на данное событие билетов уже нет.
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="ConcertRuOrderStep2Form">
+    <form action="#" class="form" data-action="goConfirm" method="POST">
+        <label for="last-name" class="no-placeholder">Фамилия</label>
+        <div>
+            <input type="text" name="last-name" id="last-name" placeholder="Фамилия" required value="<%=profile.lastName%>"/>
+        </div>
+        <label for="first-name" class="no-placeholder">Имя</label>
+        <div>
+            <input type="text" id="first-name" name="first-name" placeholder="Имя" required value="<%=profile.firstName%>">
+        </div>
+        <label for="phone" class="no-placeholder">Телефон</label>
+        <div class="input-group" >
+            <span id="plus-7" class="input-group-addon">+</span>
+            <input type="text" id="phone" name="phone" placeholder="Телефон" required  minlength="11" maxlength="13" value="<%=profile.phone%>"/>
+        </div>
+        <label for="email" class="no-placeholder">Email</label>
+        <div>
+            <input type="email" id="email" name="email"  placeholder="Email" required value="<%=profile.email%>"/>
+        </div>
+        <div>
+            <input id="agree" name="agree" type="checkbox" <%=profile.agree ? 'checked="checked"' : '' %> id="agree" required="required" value="true">
+            <label for="agree">Согласен с условиями <a target="_blank" href="http://concert.ru/Offer.html">договора-оферты</a></label>
+        </div>
+        <div style="visibility: hidden">
+            <input type="checkbox" <%=profile.sendSms ? 'checked=""' : '' %> id="send-sms" value="true">
+            <label for="send-sms">Отправить смс о заказе</label>
+        </div>
+        <div>
+            <p><input type="submit" id="buy" class="btn btn-success" value="Заказать"></p>
+            <input data-action="clearTickets" type="button" id="clear" class="btn btn-danger" value="Очистить корзину">
+        </div>
+    </form>
+</script>
+
+<script type="text/html" id="ConcertRuOrderStep2Confirm">
+	<div class="ticket-info <%= hasTicket ? 'has-ticket' : '' %>">
+		<div class="tickets">
+			<table>
+				<thead>
+				<tr>
+					<%if(actionNames != null){%><th>Мероприятие</th><%}%>
+					<th>Сектор</th>
+					<th>Ряд</th>
+					<th>Место</th>
+					<th>Цена</th>
+					<th></th>
+				</tr>
+				</thead>
+				<tbody>
+				<% for(var i = 0; i < tickets.length; i++ ) { var ticket = tickets[i]; %>
+				<tr class="ticket-row <%=ticket.isBoughtTicket?'bought-ticket':''%>" data-ticket-id="<%=ticket.ticketId%>" data-action="updateConfirmedTickets" data-ticket-Markup-Final="<%=ticket.ticketMarkupFinal%>">
+					<%if(actionNames != null){%><td><a href="javascript:void(0)"><%=actionNames[ticket.actionDateId]%></a></td><%}%>
+					<td><a href="javascript:void(0)"><%=ticket.seats%></a></td>
+					<td><a href="javascript:void(0)"><%=ticket.rowNumber%></a></td>
+					<td><a href="javascript:void(0)"><%=ticket.seatNumber%></a></td>
+					<td><a href="javascript:void(0)"><%=ticket.price%></a></td>									
+					<td><input type="checkbox" checked="checked" data-action="updateConfirmedTickets" /></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <input data-action="submit" type="submit" id="go-submit" class="btn btn-success" value="Заказать">
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="ConcertRuOrderStep3">
+	<div class="order-info">
+		<p class="alert alert-success">Ваш заказ успешно оформлен</p>
+		<div>
+			Номер вашего заказа: <strong class="order-number"><%=orderId%></strong>
+		</div>
+		<div>
+			<strong class="order-number" id="idOrderPrice">
+				<ul class="order-price">
+					<li>Сумма заказа <span id="idPurePrice"><%=parseFloat(purePrice).toFixed(2)%></span> руб.</li>
+					<li>Услуги агентства <span id="idServiceAgency"><%=parseFloat(serviceAgency).toFixed(2)%></span> руб.</li>
+					<li <%if(parseInt(orderTicketsHasPromoAction)===0) {%> class="hide" <%}%>>Скидка по промокоду <span id="idDiscountTotal"><%=parseFloat(discountTotal).toFixed(2)%></span> руб.</li>
+					<li>Итого <span id="idOrderTotal"><%=parseFloat(orderTotal).toFixed(2)%></span> руб.</li>
+				</ul>
+			</strong>
+
+		</div>
+		<div>
+			Оплатить до: <strong class="order-number"><%=reserveDate%></strong>
+		</div>
+		<form action="#" class="payment" method="POST">
+			<table>
+				<tbody>
+				<tr>
+					<td><input id="p15" type="radio" name="payment-method" value="15" checked="checked"/></td>
+					<td><label for="p15"><img src="//www.concert.ru/img/Cards/vkpay_logo.png" alt="VKPay"/></label></td>
+				</tr>
+				</tbody>
+
+			</table>
+		</form>
+	</div>
+	<% window.widget.ChangePaymentOption(0, 15); %>
+	<% window.widget.CrutchApplyPromoCode(14, "1", 15); %>
+	<div class="payment">
+		<br/>		
+        <input id="idPay" data-action="pay" class="btn btn-success" type="submit" value="Оплатить" />
+    </div>
+
+</script>
+
+ 
+
+
